@@ -24,8 +24,8 @@ From now on, for each release I will publish windows binaries for both x86 and x
 If you are not sure which architecture you are using, please download x86 one (compatible to x64).  
 
 Download address:  
-RenRenRP x86/32bit: [Adf.ly Link](https://adf.ly/2512668/renrenrp-x86) [Direct Link](https://release.jackyyf.me/RenRenRP/RenRenRP-x86.exe)  
-RenRenRP x64/64bit: [Adf.ly Link](https://adf.ly/2512668/renrenrp-x64) [Direct Link](https://release.jackyyf.me/RenRenRP/RenRenRP-x64.exe)  
+RenRenRP x86/32bit: [Adf.ly Link](https://adf.ly/2512668/renrenrp-x86) or [Direct Link](https://release.jackyyf.me/RenRenRP/RenRenRP-x86.exe)  
+RenRenRP x64/64bit: [Adf.ly Link](https://adf.ly/2512668/renrenrp-x64) or [Direct Link](https://release.jackyyf.me/RenRenRP/RenRenRP-x64.exe)  
 
 Donation
 --------
