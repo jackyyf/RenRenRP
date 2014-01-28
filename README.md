@@ -15,9 +15,19 @@ Scripts are tested on python 2.7.3.
 Requires requests (python-requests), you may use `pip install requests` to install.  
 For windows users, after installing pip with get-pip.py, you may use `python -m pip install requests`.  
 
-If you want to build windows binaries with PyInstallerBuild32.sh or PyInstallerBuild64.sh, you may need [pyinstaller](http://www.pyinstaller.org/), and with dependencies required by pyinstaller.  
+If you want to build windows binaries with PyInstallerBuild32.sh or PyInstallerBuild64.sh, you may need [pyinstaller](http://www.pyinstaller.org/), and dependencies required by pyinstaller.  
 PyInstallerBuild32.sh is for x86/32bit, and PyInstallerBuild64.sh is for x64/64bit.  
+
+Windows Binaries
+----------------
+From now on, for each release I will publish windows binaries for both x86 and x64.  
+If you are not sure which architecture you are using, please download x86 one (compatible to x64).  
+
+Download address:  
+RenRenRP x86/32bit: [Adf.ly Link](https://adf.ly/2512668/renrenrp-x86) [Direct Link](https://release.jackyyf.me/RenRenRP/RenRenRP-x86.exe)  
+RenRenRP x64/64bit: [Adf.ly Link](https://adf.ly/2512668/renrenrp-x64) [Direct Link](https://release.jackyyf.me/RenRenRP/RenRenRP-x64.exe)  
 
 Donation
 --------
 I like vim very much. So... you may want to [make a donation](http://iccf-holland.org/index.html) to uganda kids :)  
+And... if you really want to support me, use Adfly link instead of Direct Link does help a lot :)  
