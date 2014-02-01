@@ -1,0 +1,9 @@
+0.0.2 (Jan. 31 2014)
+=====
+
+! Bugfix: Fix issue #1: traceback not imported but used.
+
+0.0.1 (Jan. 24 2014)
+=====
+
++ First release, basic function implemented.
