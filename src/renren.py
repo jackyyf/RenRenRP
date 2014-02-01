@@ -36,6 +36,10 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+__name__	= 'RenRenRP'
+__version__	= '0.0.3'
+__author__	= 'jackyyf <root@jackyyf.com>'
+
 import requests
 import re
 import random
@@ -198,8 +202,8 @@ if __name__ == '__main__':
 					interval = max(int(content[pos + len(RPIntervalBefore) : epos]) / 1000.0, 0.0)
 					# Interval fix: maybe a new day is coming?
 					# Using time.localtime, Please set timezone to GMT +0800
-					current = time.localtime()
-					if current.tm_hour == 23 and current.tm_min >= 30:
+					current = time.gmtime()
+					if current.tm_hour == 15 and current.tm_min >= 30: # Since China is GMT +0800
 						secLeft = float(3600 - current.tm_min * 60 - current.tm_sec)
 						interval = min(secLeft, interval)
 					print 'Time left to get another RP Point: %.3f seconds' % interval

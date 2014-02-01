@@ -1,3 +1,9 @@
+0.0.3 (Feb. 1 2014)
+=====
+
+~ Change: Use time.gmtime instead of time.localtime, to avoid timezone
+  problem.
+
 0.0.2 (Jan. 31 2014)
 =====
 
