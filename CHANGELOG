@@ -1,3 +1,8 @@
+0.0.4 (Feb. 5 2014)
+=====
+
+! Bugfix: Fix issue #2: __name__ conflict
+
 0.0.3 (Feb. 1 2014)
 =====
 

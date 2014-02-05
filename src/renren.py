@@ -36,8 +36,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-__name__	= 'RenRenRP'
-__version__	= '0.0.3'
+__version__	= '0.0.4'
 __author__	= 'jackyyf <root@jackyyf.com>'
 
 import requests
