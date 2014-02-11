@@ -9,11 +9,17 @@ Usage
 Just run `python renren.py` :)    
 Or modify renren\_preconfig.py, and run `python renren_preconfig.py`.  
 
+Branches
+--------
+Branch master is for daily develop, may be broken or not work at all.  
+You may want to use stable branch, which contains source code of the latest stable release.  
+
 Requirements
 ------------
 Scripts are tested on python 2.7.3.    
 Requires requests (python-requests), you may use `pip install requests` to install.  
-For windows users, after installing pip with get-pip.py, you may use `python -m pip install requests`.  
+For 0.1.x version, you may also need colorama for colorful console output, you may use `pip install colorama` to install.  
+For windows users, after installing pip with get-pip.py, you may use `python -m pip` instead of `pip`.   
 
 If you want to build windows binaries with PyInstallerBuild32.sh or PyInstallerBuild64.sh, you may need [pyinstaller](http://www.pyinstaller.org/), and dependencies required by pyinstaller.  
 PyInstallerBuild32.sh is for x86/32bit, and PyInstallerBuild64.sh is for x64/64bit.  
