@@ -36,9 +36,10 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-__version__	= '0.0.4'
+__version__	= '0.1.0a'
 __author__	= 'jackyyf <root@jackyyf.com>'
 
+import logger
 import requests
 import re
 import random
@@ -48,6 +49,7 @@ from encrypt import encryptString
 import sys
 import getpass
 import traceback
+import urllib
 
 class RenRen:
 
@@ -61,12 +63,13 @@ class RenRen:
 
 	def login(self, email, pwd):
 		key = self.getEncryptKey()
-		print key
+		logger.debug('EncryptKey=' + str(key))
 
 		if self.getShowCaptcha(email) == 1:
+			logger.warn('Captcha is required for account ' + email)
 			fn = 'icode.%s.jpg' % os.getpid()
 			self.getICode(fn)
-			print "Please input the code in file '%s':" % fn
+			logger.info("Please open file '%s' and input the code" % fn)
 			icode = raw_input().strip()
 			os.remove(fn)
 		else:
@@ -80,20 +83,20 @@ class RenRen:
 			'key_id': 1,
 			'captcha_type': 'web_login',
 			'password': encryptString(key['e'], key['n'], pwd) if key['isEncrypt'] else pwd,
-			'rkey': key['rkey']
+			'rkey': key.get('rkey')
 		}
-		print "login data: %s" % data
+		logger.debug('Post Data: %s' % urllib.urlencode(data))
 		url = 'http://www.renren.com/ajaxLogin/login?1=1&uniqueTimestamp=%f' % random.random()
 		r = self.post(url, data)
 		result = r.json()
 		if result['code']:
-			print 'Login OK'
+			logger.info('Successfully logged in as ' + email)
 			self.email = email
 			r = self.get(result['homeUrl'])
 			self.getToken(r.text)
 		else:
-			print 'Login Failed!'
-			print r.text
+			logger.error('Login Faied!')
+			logger.error('Reason: ' + str(type(result['failDescription'])))
 			raise RuntimeError()
 
 	def getICode(self, fn):
@@ -103,7 +106,7 @@ class RenRen:
 				for chunk in r.iter_content():
 					f.write(chunk)
 		else:
-			print "get icode failure"
+			logger.error('Unable to get captcha! (Network issue?)')
 
 	def getShowCaptcha(self, email=None):
 		r = self.post('http://www.renren.com/ajax/ShowCaptcha', data={'email': email})
@@ -161,62 +164,3 @@ class RenRen:
 			return False
 		return True
 
-RPIntervalBefore	= '<input type="hidden" id="interval" value=\''
-RPIntervalAfter		= '\'/>'
-RPAmountBefore		= '<input type="hidden" id="refreshRp" value=\''
-RPAmountAfter		= '\'/>'
-
-if __name__ == '__main__':
-
-	print 'If you have any problem, please open an issue at https://github.com/jackyyf/RenRenRP'
-
-	# print 'RenRen Refresh Daemon, PID = %d' % os.getpid()
-
-	renren = RenRen()
-
-	try:
-		while True:
-			if not renren.console_login():
-				continue
-			while True:
-				try:
-					content = renren.RPRefresh()
-				except KeyboardInterrupt:
-					raise
-				except:
-					traceback.print_exc()
-					print 'Error! Login Again...'
-					break
-				pos = content.find(RPIntervalBefore)
-				if pos == -1:
-					print 'No RP Info... Need to login again?'
-					print 'If your account and password is right, but still get this error message again and again,'
-					print 'please open an issue at https://github.com/jackyyf/RenRenRP'
-					break
-				else:
-					epos = content.find(RPIntervalAfter, pos)
-					if epos == -1:
-						print 'Please open an issue at https://github.com/jackyyf/RenRenRP, sorry for inconvenience.'
-						sys.exit(1)
-					interval = max(int(content[pos + len(RPIntervalBefore) : epos]) / 1000.0, 0.0)
-					# Interval fix: maybe a new day is coming?
-					# Using time.localtime, Please set timezone to GMT +0800
-					current = time.gmtime()
-					if current.tm_hour == 15 and current.tm_min >= 30: # Since China is GMT +0800
-						secLeft = float(3600 - current.tm_min * 60 - current.tm_sec)
-						interval = min(secLeft, interval)
-					print 'Time left to get another RP Point: %.3f seconds' % interval
-					p1 = content.find(RPAmountBefore)
-					if p1 == -1:
-						print 'Refresh RP amount not found (format changed?). Ignored.'
-					else:
-						p2 = content.find(RPAmountAfter, p1)
-						if p2 == -1:
-							print 'Refresh RP amount not found (format changed?). Ignored.'
-						else:
-							print 'Today RP amount earned by refreshing = %s' % content[p1 + len(RPAmountBefore) : p2]
-					realSleep = min(max(interval - 1.0, 0.0), 300.0)
-					print 'Sleep %.3f seconds before another refresh ...' % realSleep
-					time.sleep(realSleep)
-	except KeyboardInterrupt:
-		print 'SIGINT received, exiting...'
