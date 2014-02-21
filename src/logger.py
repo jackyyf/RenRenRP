@@ -14,6 +14,25 @@ class Level:
 	FATAL   = 4 # This log level will trigger a backtrace, and terminate thread with sys.exit(1)
 	TRACE   = 5 # This is the level for backtrace only.
 
+class Color:
+	BLACK		= Fore.BLACK
+	RED			= Fore.RED
+	GREEN		= Fore.GREEN
+	YELLOW		= Fore.YELLOW
+	BLUE		= Fore.BLUE
+	MAGENTA		= Fore.MAGENTA
+	CYAN		= Fore.CYAN
+	WHITE		= Fore.WHITE
+	LBLACK		= Fore.BLACK + Style.DIM
+	LRED		= Fore.RED + Style.DIM
+	LGREEN		= Fore.GREEN + Style.DIM
+	LYELLOW		= Fore.YELLOW + Style.DIM
+	LBLUE		= Fore.BLUE + Style.DIM
+	LMAGENTA	= Fore.MAGENTA + Style.DIM
+	LCYAN		= Fore.CYAN + Style.DIM
+	LWHITE		= Fore.WHITE + Style.DIM
+	RESET		= Style.RESET_ALL
+
 class _logger:
 
 	_colors = {

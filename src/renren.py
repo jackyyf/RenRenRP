@@ -39,89 +39,107 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 __version__	= '0.1.0a'
 __author__	= 'jackyyf <root@jackyyf.com>'
 
-import logger
+from logger import debug, info, warn, error, fatal, stackTrace
 import requests
 import re
 import random
-import time
 import os
-from encrypt import encryptString
 import sys
+from encrypt import encryptString
 import getpass
-import traceback
 import urllib
+
+# Encoding fix.
+
+reload(sys)
+sys.setdefaultencoding('UTF-8')
 
 class RenRen:
 
-	def __init__(self, email=None, pwd=None):
+	def __init__(self):
 		self.session = requests.Session()
+		self.session.headers.update({
+			'User-Agent': "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1833.5 Safari/537.36"
+		})
 		self.has_login = False
 		self.token = {}
 
-		if email and pwd:
-			self.login(email, pwd)
-
-	def login(self, email, pwd):
+	def login(self, mail, passwd):
 		key = self.getEncryptKey()
-		logger.debug('EncryptKey=' + str(key))
+		debug('EncryptKey=' + str(key))
 
-		if self.getShowCaptcha(email) == 1:
-			logger.warn('Captcha is required for account ' + email)
+		if self.requireCaptcha(mail):
+			warn('Captcha is required for account ' + mail)
 			fn = 'icode.%s.jpg' % os.getpid()
 			self.getICode(fn)
-			logger.info("Please open file '%s' and input the code" % fn)
+			info("Please open file '%s' and input the code" % fn)
 			icode = raw_input().strip()
 			os.remove(fn)
 		else:
 			icode = ''
 
 		data = {
-			'email': email,
+			'email': mail,
 			'origURL': 'http://www.renren.com/home',
 			'icode': icode,
 			'domain': 'renren.com',
 			'key_id': 1,
 			'captcha_type': 'web_login',
-			'password': encryptString(key['e'], key['n'], pwd) if key['isEncrypt'] else pwd,
+			'password': self.encryptPassword(passwd, key),
 			'rkey': key.get('rkey')
 		}
-		logger.debug('Post Data: %s' % urllib.urlencode(data))
+		debug('Post Data: %s' % urllib.urlencode(data))
 		url = 'http://www.renren.com/ajaxLogin/login?1=1&uniqueTimestamp=%f' % random.random()
 		r = self.post(url, data)
 		result = r.json()
 		if result['code']:
-			logger.info('Successfully logged in as ' + email)
-			self.email = email
-			r = self.get(result['homeUrl'])
-			self.getToken(r.text)
+			info('Successfully logged in as ' + mail)
+			self.email = mail
 		else:
-			logger.error('Login Faied!')
-			logger.error('Reason: ' + str(type(result['failDescription'])))
+			error('Login Failed!')
+			error('Reason: ' + str(type(result['failDescription'])))
 			raise RuntimeError()
 
+	def encryptPassword(self, passwd, key):
+		debug('Encryption: ' + ('enabled' if key['isEncrypted'] else 'disabled'))
+		if not key['isEncrypted']:
+			return passwd
+		encrypted = encryptString(key['e'], key['n'], passwd)
+		info('Encrypted password: ' + encrypted)
+		return encrypted
+
 	def getICode(self, fn):
-		r = self.get("http://icode.renren.com/getcode.do?t=web_login&rnd=%s" % random.random())
-		if r.status_code == 200 and r.raw.headers['content-type'] == 'image/jpeg':
+		try:
+			r = self.get("http://icode.renren.com/getcode.do?t=web_login&rnd=%s" % random.random())
+		except requests.RequestException:
+			error('Unable to get captcha! (Network problem?)')
+			return
+		if r.status_code == 200 and r.raw.headers['content-type'].lower() == 'image/jpeg':
 			with open(fn, 'wb') as f:
 				for chunk in r.iter_content():
 					f.write(chunk)
 		else:
-			logger.error('Unable to get captcha! (Network issue?)')
+			error('Unable to get captcha! (Not an image?)')
 
-	def getShowCaptcha(self, email=None):
-		r = self.post('http://www.renren.com/ajax/ShowCaptcha', data={'email': email})
-		return r.json()
+	def requireCaptcha(self, mail=None):
+		res = self.post('http://www.renren.com/ajax/ShowCaptcha', data={'email': mail})
+		try:
+			res = int(res)
+		except:
+			pass
+		return res
+		# return r.json()
 
 	def getEncryptKey(self):
 		r = requests.get('http://login.renren.com/ajax/getEncryptKey')
+
 		return r.json()
 
-	def getToken(self, html=''):
+	def getToken(self):
 		p = re.compile("get_check:'(.*)',get_check_x:'(.*)',env")
 
-		if not html:
-			r = self.get('http://www.renren.com')
-			html = r.text
+		r = self.get('http://www.renren.com')
+		html = r.text
 
 		result = p.search(html)
 		self.token = {
@@ -133,9 +151,6 @@ class RenRen:
 		if data:
 			data.update(self.token)
 
-		self.session.headers.update({
-			'User-Agent'	:	"Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1797.2 Safari/537.36"
-		})
 
 		if method == 'get':
 			return self.session.get(url, data=data)

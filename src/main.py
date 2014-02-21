@@ -1,4 +1,7 @@
+import sys
+import time
 from renren import RenRen
+import logger
 
 RPIntervalBefore	= '<input type="hidden" id="interval" value=\''
 RPIntervalAfter		= '\'/>'
@@ -23,7 +26,7 @@ if __name__ == '__main__':
 				except KeyboardInterrupt:
 					raise
 				except:
-					traceback.print_exc()
+					logger.stackTrace()
 					print 'Error! Login Again...'
 					break
 				pos = content.find(RPIntervalBefore)
