@@ -1,3 +1,8 @@
+0.0.5 (Feb. 21 2014)
+=====
+
+! Bugfix: Fix encoding issue: use repr to avoid encode to specific encoding.
+
 0.0.4 (Feb. 5 2014)
 =====
 

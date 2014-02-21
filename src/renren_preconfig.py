@@ -36,7 +36,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-__version__	= '0.0.4'
+__version__	= '0.0.5'
 __author__	= 'jackyyf <root@jackyyf.com>'
 
 # Account Information
@@ -97,7 +97,7 @@ class RenRen:
 			self.getToken(r.text)
 		else:
 			print 'Login Failed!'
-			print r.text
+			print repr(r.text)
 			raise RuntimeError()
 
 	def getICode(self, fn):
